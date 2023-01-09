@@ -29,6 +29,7 @@ case
     end balance_type ,
     customer
 from transactions t
+where extract(month from (t.dt)) = 1
 group BY customer
 )
 group by balance_type
