@@ -1,0 +1,36 @@
+problems:
+For each customer determine the amount of debit & credit transactions during January.
+Substract total credsit with total debit to get net borrowing.
+
+The report should contains 2 rows. 
+- Row 1 will contains "postive" followed by customer names with comma separated.
+- Row 1 will contains "negative" followed by customer names with comma separated.
+
+
+
+--- preps
+create table transactions(
+    dt timestamp,
+    customer varchar2(30),
+    debit number(10),
+    credit number(10)
+);
+
+insert into transactions values (sysdate,'asif',12,10);
+
+---- query
+select balance_type, listagg(customer,',') within group(order by balance_type,customer)
+from (
+select 
+case 
+    when (sum(t.credit)  - sum(t.debit)) > 0 
+    then 'positive'    
+    else 'negative'  
+    end balance_type ,
+    customer
+from transactions t
+group BY customer
+)
+group by balance_type
+order by 1 desc;
+
